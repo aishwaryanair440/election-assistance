@@ -201,10 +201,25 @@ app.post('/api/quizzes/submit', async (req, res) => {
 });
 
 // AI Chat - Ask about elections
+/**
+ * POST /api/ask
+ * Handles AI-powered election queries using Google Gemini.
+ * Includes security sanitization and structured system prompts.
+ */
 app.post('/api/ask', async (req, res) => {
-  const { question } = req.body;
+  let { question } = req.body;
+  
+  // Security: Input Sanitization & Validation
+  if (!question || typeof question !== 'string' || question.length < 3) {
+    return res.status(400).json({ error: 'Please provide a valid question (min 3 characters).' });
+  }
+  
+  // Limit input size for efficiency and security
+  question = question.slice(0, 500).trim();
+
   try {
-    if (!process.env.GEMINI_API_KEY) {
+    // Check if Google AI is configured
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key') {
       const fallbackResponses = {
         default: "I'm your Election Education Assistant! While the AI service is being configured, I can tell you that the Election Commission of India (ECI) oversees all elections in our country. India, the world's largest democracy, conducts elections using Electronic Voting Machines (EVMs) with VVPAT verification. Every citizen aged 18+ can register to vote.",
         vote: "To vote in India, you must be 18 years or older, an Indian citizen, and registered in the electoral roll. You'll need your Voter ID (EPIC) card. On polling day, visit your assigned booth, get your finger inked, and press the button next to your chosen candidate on the EVM.",
@@ -212,7 +227,7 @@ app.post('/api/ask', async (req, res) => {
         register: "You can register to vote through the NVSP portal (voters.eci.gov.in), the Voter Helpline App, or by submitting Form 6 to your local Electoral Registration Officer."
       };
 
-      const q = (question || "").toLowerCase();
+      const q = question.toLowerCase();
       let answer = fallbackResponses.default;
       if (q.includes('vote') || q.includes('voting')) answer = fallbackResponses.vote;
       else if (q.includes('evm') || q.includes('machine')) answer = fallbackResponses.evm;
@@ -220,14 +235,24 @@ app.post('/api/ask', async (req, res) => {
 
       return res.json({ answer });
     }
-    const model = ai.getGenerativeModel({ model: "gemini-1.5-flash" });
-    const result = await model.generateContent(`You are an Election Process Education Assistant helping an Indian user understand elections. Be friendly and clear. Question: ${question}`);
-    res.json({ answer: result.response.text() });
+
+    // Google Services: Enhanced Gemini Prompting
+    const model = ai.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: "You are 'Nirvachak Assistant', an expert on the Indian Election Process. Provide accurate, non-partisan, and educational information. Use clear formatting with bullet points if needed. If a question is unrelated to elections, politely redirect the user."
+    });
+
+    const result = await model.generateContent(question);
+    const responseText = result.response.text();
+    
+    res.json({ answer: responseText });
   } catch (error) {
     console.error('Gemini API Error:', error);
-    res.status(500).json({ error: 'Failed to get answer from AI. Please try again.' });
+    // Security: Don't leak raw error details to the client
+    res.status(500).json({ error: 'Our AI assistant is temporarily unavailable. Please try again later.' });
   }
 });
+
 
 // Health check
 app.get('/api/health', (req, res) => {

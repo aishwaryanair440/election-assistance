@@ -122,20 +122,29 @@ export default function Learn() {
           </div>
         </div>
 
-        <nav className="sidebar-gov__nav">
+        <nav className="sidebar-gov__nav" aria-label="Curriculum Navigation">
           {modules.map((mod, i) => (
             <button
               key={mod._id}
               className={`sidebar-gov__item ${i === activeModule ? 'sidebar-gov__item--active' : ''} ${completedModules.has(i) ? 'sidebar-gov__item--completed' : ''}`}
               onClick={() => { setActiveModule(i); setSidebarOpen(false); }}
               id={`module-nav-${i}`}
+              aria-current={i === activeModule ? 'step' : undefined}
+              aria-label={`Section ${mod.order}: ${mod.title}`}
             >
-              <div className="sidebar-gov__item-step">Section {mod.order}</div>
+              <div className="sidebar-gov__item-step" aria-hidden="true">Section {mod.order}</div>
               <div className="sidebar-gov__item-title">{mod.title}</div>
-              {completedModules.has(i) && <CheckCircle size={14} className="sidebar-gov__item-icon" />}
+              {completedModules.has(i) && (
+                <CheckCircle 
+                  size={14} 
+                  className="sidebar-gov__item-icon" 
+                  aria-label="Completed" 
+                />
+              )}
             </button>
           ))}
         </nav>
+
       </aside>
 
       {/* ── Main Content Area ── */}
@@ -202,11 +211,13 @@ export default function Learn() {
                     className="btn-gov btn-gov--primary"
                     onClick={() => markComplete(activeModule)}
                     id="module-finish"
+                    aria-label={completedModules.has(activeModule) ? 'Curriculum Completed' : 'Mark Section as Completed'}
                   >
-                    <CheckCircle size={18} />
+                    <CheckCircle size={18} aria-hidden="true" />
                     {completedModules.has(activeModule) ? 'Curriculum Completed' : 'Mark as Completed'}
                   </button>
                 )}
+
               </div>
             </motion.article>
           )}
@@ -217,10 +228,13 @@ export default function Learn() {
       <button 
         className="sidebar-gov-toggle" 
         onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label="Toggle Curriculum Index"
+        aria-expanded={sidebarOpen}
       >
-        <FileText size={18} />
+        <FileText size={18} aria-hidden="true" />
         Index
       </button>
+
 
       {sidebarOpen && (
         <div className="learn-gov__overlay" onClick={() => setSidebarOpen(false)} />
