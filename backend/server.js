@@ -2,14 +2,40 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const { GoogleGenAI } = require('@google/genai');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const NodeCache = require('node-cache');
 require('dotenv').config();
+
+
 
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Initialize Cache (Efficiency)
+const apiCache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
+
+// ──────────────────────────────────────
+// SECURITY MIDDLEWARE
+// ──────────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: false, // Disabled for simple deployment, enable in production
+}));
 app.use(cors());
 app.use(express.json());
+
+// Rate Limiting (Security)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+// Apply rate limiting specifically to AI and Seed routes
+app.use('/api/ask', apiLimiter);
+app.use('/api/seed', apiLimiter);
+
 
 // Serve static files from the frontend/dist directory
 const frontendDist = path.join(__dirname, '../frontend/dist');
@@ -136,20 +162,29 @@ app.post('/api/seed', async (req, res) => {
 // Get all modules
 app.get('/api/modules', async (req, res) => {
   try {
-    if (isUsingMock) return res.json(mockModules);
+    // Try cache first (Efficiency)
+    const cachedData = apiCache.get('modules');
+    if (cachedData) return res.json(cachedData);
+
+    if (isUsingMock) {
+      apiCache.set('modules', mockModules);
+      return res.json(mockModules);
+    }
     
-    let modules = await Module.find().sort({ order: 1 });
+    let modules = await Module.find().sort({ order: 1 }).lean();
     if (modules.length === 0) {
       await Module.insertMany(seedModules);
-      modules = await Module.find().sort({ order: 1 });
+      modules = await Module.find().sort({ order: 1 }).lean();
     }
+    
+    apiCache.set('modules', modules);
     res.json(modules);
   } catch (error) {
     console.error('Modules error:', error);
-    // Fallback to mock on error
     res.json(mockModules);
   }
 });
+
 
 // Get all quizzes
 app.get('/api/quizzes', async (req, res) => {
@@ -236,10 +271,22 @@ app.post('/api/ask', async (req, res) => {
       return res.json({ answer });
     }
 
-    // Google Services: Enhanced Gemini Prompting
+    // Google Services: Advanced Gemini Configuration
     const model = ai.getGenerativeModel({ 
       model: "gemini-1.5-flash",
-      systemInstruction: "You are 'Nirvachak Assistant', an expert on the Indian Election Process. Provide accurate, non-partisan, and educational information. Use clear formatting with bullet points if needed. If a question is unrelated to elections, politely redirect the user."
+      systemInstruction: "You are 'Nirvachak Assistant', a highly professional expert on the Indian Election Process. Your goal is to provide accurate, non-partisan, and detailed educational information. Use structured formatting with headers and bullet points. If asked about controversial topics, stick to official ECI guidelines and constitutional facts. If a question is entirely unrelated to elections or Indian democracy, politely redirect the user back to election-related topics.",
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.8,
+        topK: 40,
+        maxOutputTokens: 1024,
+      },
+      safetySettings: [
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+      ]
     });
 
     const result = await model.generateContent(question);
@@ -248,10 +295,10 @@ app.post('/api/ask', async (req, res) => {
     res.json({ answer: responseText });
   } catch (error) {
     console.error('Gemini API Error:', error);
-    // Security: Don't leak raw error details to the client
     res.status(500).json({ error: 'Our AI assistant is temporarily unavailable. Please try again later.' });
   }
 });
+
 
 
 // Health check

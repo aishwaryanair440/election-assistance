@@ -124,9 +124,10 @@ export default function Chat() {
                     <span className="msg-time">{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                     {msg.sender === 'bot' && msg.id !== 1 && (
                       <div className="msg-rating">
-                        <button title="Helpful"><ThumbsUp size={12} /></button>
-                        <button title="Not Helpful"><ThumbsDown size={12} /></button>
+                        <button title="Helpful" aria-label="Helpful"><ThumbsUp size={12} aria-hidden="true" /></button>
+                        <button title="Not Helpful" aria-label="Not Helpful"><ThumbsDown size={12} aria-hidden="true" /></button>
                       </div>
+
                     )}
                   </div>
                 </div>
@@ -167,10 +168,13 @@ export default function Chat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isTyping}
+              aria-label="Election query input"
+              maxLength={500}
             />
-            <button type="submit" disabled={!input.trim() || isTyping}>
-              {isTyping ? <Loader size={18} className="spin" /> : <Send size={18} />}
+            <button type="submit" disabled={!input.trim() || isTyping} aria-label="Send Message">
+              {isTyping ? <Loader size={18} className="spin" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
             </button>
+
           </div>
           <div className="chat-gov__footer-meta">
             <div className="secure-tag">

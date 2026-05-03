@@ -12,9 +12,11 @@ function App() {
 
   return (
     <div className="app">
+      <a href="#main-content" className="skip-link">Skip to Content</a>
       <Navbar />
       
-      <main className="app__content">
+      <main className="app__content" id="main-content">
+
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Landing />} />

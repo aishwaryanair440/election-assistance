@@ -123,12 +123,21 @@ export default function Landing() {
                 </motion.div>
               </AnimatePresence>
               
-              <button className="carousel__btn carousel__btn--prev" onClick={prevSlide}>
-                <ChevronLeft size={24} />
+              <button 
+                className="carousel__btn carousel__btn--prev" 
+                onClick={prevSlide}
+                aria-label="Previous Slide"
+              >
+                <ChevronLeft size={24} aria-hidden="true" />
               </button>
-              <button className="carousel__btn carousel__btn--next" onClick={nextSlide}>
-                <ChevronRight size={24} />
+              <button 
+                className="carousel__btn carousel__btn--next" 
+                onClick={nextSlide}
+                aria-label="Next Slide"
+              >
+                <ChevronRight size={24} aria-hidden="true" />
               </button>
+
               
               <div className="carousel__dots">
                 {carouselImages.map((_, i) => (
@@ -188,13 +197,14 @@ export default function Landing() {
       <section className="stats-gov">
         <div className="stats-gov__container">
           <div className="stat-item-gov">
-            <div className="stat-num">10+</div>
+            <div className="stat-num">20+</div>
             <div className="stat-text">Learning Modules</div>
           </div>
           <div className="stat-item-gov">
-            <div className="stat-num">15+</div>
+            <div className="stat-num">25+</div>
             <div className="stat-text">Quiz Questions</div>
           </div>
+
           <div className="stat-item-gov">
             <div className="stat-num">24/7</div>
             <div className="stat-text">AI Support</div>

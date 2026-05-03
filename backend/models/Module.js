@@ -7,4 +7,7 @@ const ModuleSchema = new mongoose.Schema({
   icon: { type: String, default: 'book-open' }
 });
 
+ModuleSchema.index({ order: 1 });
+
+
 module.exports = mongoose.model('Module', ModuleSchema);
