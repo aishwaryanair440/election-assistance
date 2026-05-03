@@ -1,7 +1,7 @@
 /* ── Navbar (Official Government Style) ───────────────────────── */
 .navbar {
   position: fixed;
-  top: 30px; /* Below accessibility bar */
+  top: 4px; /* Directly below tricolor strip */
   left: 0;
   right: 0;
   z-index: 1000;
@@ -10,10 +10,6 @@
   box-shadow: var(--shadow-sm);
   padding: var(--space-sm) var(--space-xl);
   transition: all var(--transition-base);
-}
-
-@media (max-width: 768px) {
-  .navbar { top: 4px; } /* Directly below tricolor strip on mobile */
 }
 
 .navbar--scrolled {

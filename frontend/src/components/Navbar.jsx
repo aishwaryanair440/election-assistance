@@ -1,6 +1,6 @@
 import { NavLink, useLocation, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Vote, BookOpen, Brain, MessageCircle, Menu, X, Accessibility } from 'lucide-react'
+import { Vote, BookOpen, Brain, MessageCircle, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import './Navbar.css'
 
@@ -14,8 +14,6 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [fontSize, setFontSize] = useState(100) // Percentage
-  const [lang, setLang] = useState('EN')
   const location = useLocation()
 
   useEffect(() => {
@@ -28,27 +26,6 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  useEffect(() => {
-    document.documentElement.style.fontSize = `${fontSize}%`
-  }, [fontSize])
-
-  const adjustFontSize = (type) => {
-    if (type === 'increase' && fontSize < 120) setFontSize(prev => prev + 5)
-    if (type === 'decrease' && fontSize > 80) setFontSize(prev => prev - 5)
-    if (type === 'reset') setFontSize(100)
-  }
-
-  const toggleLang = () => setLang(prev => (prev === 'EN' ? 'HI' : 'EN'))
-
-  const skipToContent = () => {
-    const main = document.getElementById('main-content')
-    if (main) {
-      main.tabIndex = -1
-      main.focus()
-      main.scrollIntoView()
-    }
-  }
-
   return (
     <>
       <div className="tricolor-strip">
@@ -57,21 +34,6 @@ export default function Navbar() {
         <div className="strip-green" />
       </div>
       
-      <div className="accessibility-bar">
-        <div className="accessibility-bar__container">
-          <button className="acc-btn" onClick={skipToContent}>Skip to main content</button>
-          <button className="acc-btn" onClick={() => alert('Screen Reader optimized mode active.')}>Screen Reader Access</button>
-          <div className="font-controls">
-            <button className="acc-btn" onClick={() => adjustFontSize('decrease')} title="Decrease Font">A-</button>
-            <button className="acc-btn" onClick={() => adjustFontSize('reset')} title="Normal Font">A</button>
-            <button className="acc-btn" onClick={() => adjustFontSize('increase')} title="Increase Font">A+</button>
-          </div>
-          <button className="acc-btn lang-toggle" onClick={toggleLang}>
-            {lang === 'EN' ? 'हिन्दी' : 'English'}
-          </button>
-        </div>
-      </div>
-
       <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
         <div className="navbar__container">
           <NavLink to="/" className="navbar__brand" id="nav-brand">

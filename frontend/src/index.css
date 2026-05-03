@@ -123,25 +123,6 @@ a {
 .strip-white { background: #FFFFFF; }
 .strip-green { background: var(--green); }
 
-/* ── Accessibility Bar ── */
-.accessibility-bar {
-  background: var(--navy);
-  color: white;
-  padding: 4px var(--space-xl);
-  font-size: 0.7rem;
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-md);
-  z-index: 1100;
-  position: fixed;
-  top: 4px;
-  width: 100%;
-}
-
-@media (max-width: 768px) {
-  .accessibility-bar { display: none; }
-}
-
 /* ── Global Image Optimization ── */
 img {
   max-width: 100%;
