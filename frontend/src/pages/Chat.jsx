@@ -150,13 +150,19 @@ export default function Chat() {
         {messages.length < 3 && (
           <div className="chat-gov__suggestions">
             <p>Suggested Questions:</p>
-            <div className="suggestion-chips">
+            <div className="suggestion-chips" role="group" aria-label="Suggested election questions">
               {SUGGESTED_QUESTIONS.map((q, i) => (
-                <button key={i} className="suggestion-chip" onClick={() => handleSend(q)}>
-                  {q} <ArrowRight size={12} />
+                <button 
+                  key={i} 
+                  className="suggestion-chip" 
+                  onClick={() => handleSend(q)}
+                  aria-label={`Ask: ${q}`}
+                >
+                  {q} <ArrowRight size={12} aria-hidden="true" />
                 </button>
               ))}
             </div>
+
           </div>
         )}
 

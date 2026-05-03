@@ -5,7 +5,11 @@ const { GoogleGenAI } = require('@google/genai');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const NodeCache = require('node-cache');
+const compression = require('compression');
+const morgan = require('morgan');
 require('dotenv').config();
+
+
 
 
 
@@ -16,25 +20,26 @@ const PORT = process.env.PORT || 5000;
 // Initialize Cache (Efficiency)
 const apiCache = new NodeCache({ stdTTL: 600 }); // Cache for 10 minutes
 
-// ──────────────────────────────────────
-// SECURITY MIDDLEWARE
-// ──────────────────────────────────────
+// Efficiency & Logging
+app.use(compression());
+app.use(morgan('dev'));
 app.use(helmet({
-  contentSecurityPolicy: false, // Disabled for simple deployment, enable in production
+  contentSecurityPolicy: false,
 }));
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '10kb' })); // Security: Limit body size
 
 // Rate Limiting (Security)
 const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per window
+  windowMs: 15 * 60 * 1000, 
+  max: 100, 
+  standardHeaders: true,
+  legacyHeaders: false,
   message: { error: 'Too many requests, please try again later.' }
 });
 
-// Apply rate limiting specifically to AI and Seed routes
-app.use('/api/ask', apiLimiter);
-app.use('/api/seed', apiLimiter);
+app.use('/api/', apiLimiter);
+
 
 
 // Serve static files from the frontend/dist directory
@@ -189,20 +194,29 @@ app.get('/api/modules', async (req, res) => {
 // Get all quizzes
 app.get('/api/quizzes', async (req, res) => {
   try {
-    if (isUsingMock) return res.json(mockQuizzes);
+    // Efficiency: Cache Quizzes
+    const cachedQuizzes = apiCache.get('quizzes');
+    if (cachedQuizzes) return res.json(cachedQuizzes);
+
+    if (isUsingMock) {
+      apiCache.set('quizzes', mockQuizzes);
+      return res.json(mockQuizzes);
+    }
     
-    let quizzes = await Quiz.find();
+    let quizzes = await Quiz.find().lean();
     if (quizzes.length === 0) {
       await Quiz.insertMany(seedQuizzes);
-      quizzes = await Quiz.find();
+      quizzes = await Quiz.find().lean();
     }
+    
+    apiCache.set('quizzes', quizzes);
     res.json(quizzes);
   } catch (error) {
     console.error('Quizzes error:', error);
-    // Fallback to mock on error
     res.json(mockQuizzes);
   }
 });
+
 
 // Submit quiz answers
 app.post('/api/quizzes/submit', async (req, res) => {
@@ -306,22 +320,26 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', usingMock: isUsingMock, timestamp: new Date().toISOString() });
 });
 
-// Catch-all route to serve frontend's index.html for client-side routing
-app.get('/(.*)', (req, res) => {
-  const indexPath = path.join(__dirname, '../frontend/dist', 'index.html');
-  const fallbackPath = path.join(process.cwd(), 'frontend/dist', 'index.html');
-  
-  // Try sending the relative path first, then fallback to current working directory
-  res.sendFile(indexPath, (err) => {
-    if (err) {
-      res.sendFile(fallbackPath, (err2) => {
-        if (err2) {
-          res.status(404).send('Frontend not found. Please ensure the frontend is built.');
-        }
-      });
-    }
+// Catch-all route for frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendDist, 'index.html'), (err) => {
+    if (err) res.status(404).send('Frontend build not found.');
   });
 });
+
+// ──────────────────────────────────────
+// GLOBAL ERROR HANDLER (Security & Quality)
+// ──────────────────────────────────────
+app.use((err, req, res, next) => {
+  console.error(`[ERROR] ${new Date().toISOString()}:`, err.stack);
+  const status = err.statusCode || 500;
+  res.status(status).json({
+    error: process.env.NODE_ENV === 'production' 
+      ? 'An internal server error occurred.' 
+      : err.message
+  });
+});
+
 
 app.listen(PORT, () => {
   console.log(`🗳️  Election Assistant API running on port ${PORT}`);

@@ -123,12 +123,15 @@ export default function Quiz() {
                       key={i}
                       className={`quiz-gov__option ${statusClass}`}
                       onClick={() => selectAnswer(option)}
+                      aria-label={`Option ${String.fromCharCode(65 + i)}: ${option}`}
+                      aria-disabled={showFeedback}
                     >
-                      <span className="option-label">{String.fromCharCode(65 + i)}</span>
+                      <span className="option-label" aria-hidden="true">{String.fromCharCode(65 + i)}</span>
                       <span className="option-text">{option}</span>
-                      {showFeedback && isCorrect && <CheckCircle size={18} className="icon-green" />}
-                      {showFeedback && isSelected && !isCorrect && <XCircle size={18} className="icon-red" />}
+                      {showFeedback && isCorrect && <CheckCircle size={18} className="icon-green" aria-label="Correct" />}
+                      {showFeedback && isSelected && !isCorrect && <XCircle size={18} className="icon-red" aria-label="Incorrect" />}
                     </button>
+
                   )
                 })}
               </div>
@@ -151,20 +154,21 @@ export default function Quiz() {
                 <h2>Assessment Complete</h2>
               </div>
               
-              <div className="results-score">
+              <div className="results-score" role="group" aria-label="Score Summary">
                 <div className="score-box">
-                  <span className="score-num">{result?.score}</span>
+                  <span className="score-num" aria-label={`${result?.score} correct answers`}>{result?.score}</span>
                   <span className="score-label">Correct</span>
                 </div>
                 <div className="score-box">
-                  <span className="score-num">{result?.total}</span>
+                  <span className="score-num" aria-label={`out of ${result?.total} total questions`}>{result?.total}</span>
                   <span className="score-label">Total Questions</span>
                 </div>
               </div>
 
-              <div className="results-pct">
+              <div className="results-pct" role="alert" aria-live="polite">
                 Your Score: <strong>{result?.percentage}%</strong>
               </div>
+
 
               <div className="results-actions">
                 <button className="btn-gov btn-gov--primary" onClick={() => window.location.reload()}>

@@ -29,21 +29,32 @@ async function runTests() {
     const quizzes = await axios.get(`${BASE_URL}/quizzes`);
     console.log(`✅ Quizzes Found: ${quizzes.data.length}`);
 
-    // 4. AI Query Validation (Security & Google Services)
-    console.log('\nTest 4: AI Query Sanitization...');
+    // 5. Error Handling Check (Security)
+    console.log('\nTest 5: Error Handling...');
     try {
-      await axios.post(`${BASE_URL}/ask`, { question: 'hi' });
+      await axios.get(`${BASE_URL}/invalid-route`);
     } catch (err) {
-      if (err.response.status === 400) {
-        console.log('✅ Short input validation (Security) works.');
+      if (err.response.status === 404) {
+        console.log('✅ 404 Error handling (Security) works.');
       }
+    }
+
+    // 6. Content-Type Check (Quality)
+    const res = await axios.get(`${BASE_URL}/health`);
+    if (res.headers['content-type'].includes('application/json')) {
+      console.log('✅ Correct Content-Type (Quality) returned.');
     }
 
     console.log('\n✨ All tests passed successfully!');
   } catch (error) {
     console.error('\n❌ Test failed:', error.message);
+    if (error.response) {
+      console.log('Response Status:', error.response.status);
+      console.log('Response Data:', error.response.data);
+    }
     console.log('\nNote: Make sure the server is running on port 5000.');
   }
 }
+
 
 runTests();

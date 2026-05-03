@@ -1,10 +1,13 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Navbar from './components/Navbar'
-import Landing from './pages/Landing'
-import Learn from './pages/Learn'
-import Quiz from './pages/Quiz'
-import Chat from './pages/Chat'
+
+const Landing = lazy(() => import('./pages/Landing'))
+const Learn = lazy(() => import('./pages/Learn'))
+const Quiz = lazy(() => import('./pages/Quiz'))
+const Chat = lazy(() => import('./pages/Chat'))
+
 import './App.css'
 
 function App() {
@@ -16,16 +19,18 @@ function App() {
       <Navbar />
       
       <main className="app__content" id="main-content">
-
-        <AnimatePresence mode="wait">
-          <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Landing />} />
-            <Route path="/learn" element={<Learn />} />
-            <Route path="/quiz" element={<Quiz />} />
-            <Route path="/chat" element={<Chat />} />
-          </Routes>
-        </AnimatePresence>
+        <Suspense fallback={<div className="app-loading">Loading NirvachakSetu...</div>}>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<Landing />} />
+              <Route path="/learn" element={<Learn />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/chat" element={<Chat />} />
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
       </main>
+
       
       {/* Decorative Background Elements */}
       <div className="app__bg-glow app__bg-glow--1" />
