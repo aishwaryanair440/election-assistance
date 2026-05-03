@@ -4,11 +4,15 @@ const cors = require('cors');
 const { GoogleGenAI } = require('@google/genai');
 require('dotenv').config();
 
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the frontend/dist directory
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
 // ──────────────────────────────────────
 // DATA STORE & SEED DATA
@@ -204,6 +208,11 @@ app.post('/api/ask', async (req, res) => {
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', usingMock: isUsingMock, timestamp: new Date().toISOString() });
+});
+
+// Catch-all route to serve frontend's index.html for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
 });
 
 app.listen(PORT, () => {
