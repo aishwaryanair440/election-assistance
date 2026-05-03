@@ -1,10 +1,26 @@
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { 
   Vote, BookOpen, Brain, MessageCircle, Shield, 
-  ArrowRight, CheckSquare, Info, FileText
+  ArrowRight, CheckSquare, Info, FileText, ChevronLeft, ChevronRight
 } from 'lucide-react'
 import './Landing.css'
+
+// Import Carousel Images
+import voterIdImg from '../assets/voter_id.png'
+import happyVotersImg from '../assets/happy_voters.png'
+
+const carouselImages = [
+  {
+    url: voterIdImg,
+    caption: 'Secure Your Future with Your Voter ID Card'
+  },
+  {
+    url: happyVotersImg,
+    caption: 'Join Millions in Strengthening Democracy'
+  }
+]
 
 const features = [
   {
@@ -34,6 +50,18 @@ const features = [
 ]
 
 export default function Landing() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselImages.length)
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length)
+
   return (
     <div className="landing" id="landing-page">
       {/* ── Official Hero Section ── */}
@@ -73,14 +101,44 @@ export default function Landing() {
           </motion.div>
           
           <motion.div 
-            className="hero-gov__image"
+            className="hero-gov__carousel"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="official-seal">
-              <Vote size={120} strokeWidth={1} color="var(--navy)" opacity={0.1} />
-              <div className="seal-ring" />
+            <div className="carousel">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentSlide}
+                  className="carousel__slide"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <img src={carouselImages[currentSlide].url} alt="Carousel" />
+                  <div className="carousel__caption">
+                    {carouselImages[currentSlide].caption}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+              
+              <button className="carousel__btn carousel__btn--prev" onClick={prevSlide}>
+                <ChevronLeft size={24} />
+              </button>
+              <button className="carousel__btn carousel__btn--next" onClick={nextSlide}>
+                <ChevronRight size={24} />
+              </button>
+              
+              <div className="carousel__dots">
+                {carouselImages.map((_, i) => (
+                  <div 
+                    key={i} 
+                    className={`carousel__dot ${i === currentSlide ? 'carousel__dot--active' : ''}`}
+                    onClick={() => setCurrentSlide(i)}
+                  />
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
