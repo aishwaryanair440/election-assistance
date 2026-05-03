@@ -1,252 +1,175 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { 
-  Vote, BookOpen, Brain, MessageCircle, Shield, Users, 
-  ArrowRight, Sparkles, ChevronRight, Star
+  Vote, BookOpen, Brain, MessageCircle, Shield, 
+  ArrowRight, CheckSquare, Info, FileText
 } from 'lucide-react'
 import './Landing.css'
 
 const features = [
   {
     icon: BookOpen,
-    title: 'Learn Step-by-Step',
-    desc: 'Master the Indian election process through 10 comprehensive, beautifully crafted modules.',
-    color: '#FF9933'
+    title: 'Electoral Process',
+    desc: 'Detailed documentation on how elections are conducted in India, from notification to results.',
+    color: 'var(--navy)'
   },
   {
     icon: Brain,
-    title: 'Test Your Knowledge',
-    desc: '15 interactive quiz questions across easy, medium, and hard difficulty levels.',
-    color: '#138808'
+    title: 'Voter Awareness Quiz',
+    desc: 'Evaluate your knowledge of democratic rights and the electoral system through certified modules.',
+    color: 'var(--navy)'
   },
   {
     icon: MessageCircle,
-    title: 'AI-Powered Answers',
-    desc: 'Got questions? Our Gemini AI assistant provides instant, accurate answers about elections.',
-    color: '#6366f1'
+    title: 'Citizen Helpdesk',
+    desc: 'Instant AI-powered support for queries related to voter ID, polling booths, and election laws.',
+    color: 'var(--navy)'
   },
   {
     icon: Shield,
-    title: 'Your Rights Matter',
-    desc: 'Understand your voting rights, NOTA options, and how to report election violations.',
-    color: '#ec4899'
+    title: 'Rights & Grievances',
+    desc: 'Information on Model Code of Conduct and mechanisms for reporting electoral malpractices.',
+    color: 'var(--navy)'
   }
 ]
-
-const stats = [
-  { value: '10+', label: 'Learning Modules' },
-  { value: '15+', label: 'Quiz Questions' },
-  { value: 'AI', label: 'Powered Chat' },
-  { value: '100%', label: 'Free & Open' },
-]
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.12 }
-  }
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
-  }
-}
 
 export default function Landing() {
   return (
     <div className="landing" id="landing-page">
-      {/* ── Hero Section ── */}
-      <section className="hero" id="hero-section">
-        <div className="hero__bg">
-          <div className="hero__orb hero__orb--1" />
-          <div className="hero__orb hero__orb--2" />
-          <div className="hero__orb hero__orb--3" />
-          <div className="hero__grid" />
-        </div>
-
-        <motion.div
-          className="hero__content"
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <motion.div
-            className="hero__badge"
-            initial={{ opacity: 0, scale: 0.8 }}
+      {/* ── Official Hero Section ── */}
+      <section className="hero-gov" id="hero-section">
+        <div className="hero-gov__container">
+          <motion.div 
+            className="hero-gov__content"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="hero-gov__badge">
+              <Info size={14} />
+              <span>Official Voter Education Portal</span>
+            </div>
+            
+            <h1 className="hero-gov__title">
+              Empowering the Citizenry through <span className="text-highlight">Informed Voting</span>
+            </h1>
+            
+            <p className="hero-gov__text">
+              NirvachakSetu is a dedicated initiative to enhance electoral literacy among Indian citizens. 
+              Access official learning modules, test your knowledge, and interact with our automated 
+              helpdesk for all election-related information.
+            </p>
+            
+            <div className="hero-gov__actions">
+              <Link to="/learn" className="btn-gov btn-gov--primary" id="start-learning">
+                Start Learning Process
+                <ArrowRight size={18} />
+              </Link>
+              <Link to="/chat" className="btn-gov btn-gov--secondary" id="ask-questions">
+                <MessageCircle size={18} />
+                Ask a Question
+              </Link>
+            </div>
+          </motion.div>
+          
+          <motion.div 
+            className="hero-gov__image"
+            initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            transition={{ duration: 0.8 }}
           >
-            <Sparkles size={14} />
-            <span>Empowering India's Voters</span>
+            <div className="official-seal">
+              <Vote size={120} strokeWidth={1} color="var(--navy)" opacity={0.1} />
+              <div className="seal-ring" />
+            </div>
           </motion.div>
-
-          <motion.h1
-            className="hero__title"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            Your Vote,{' '}
-            <span className="hero__title--accent">Your Voice</span>
-            <br />
-            <span className="hero__title--sub">Learn. Quiz. Ask AI.</span>
-          </motion.h1>
-
-          <motion.p
-            className="hero__subtitle"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-          >
-            NirvachakSetu is your complete guide to understanding India's election process.
-            From voter registration to polling day — learn everything with interactive modules,
-            quizzes, and AI-powered assistance.
-          </motion.p>
-
-          <motion.div
-            className="hero__actions"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-          >
-            <Link to="/learn" className="btn btn--primary" id="hero-cta-learn">
-              <BookOpen size={18} />
-              Start Learning
-              <ArrowRight size={16} />
-            </Link>
-            <Link to="/quiz" className="btn btn--secondary" id="hero-cta-quiz">
-              <Brain size={18} />
-              Take Quiz
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        {/* ── Floating Elements ── */}
-        <motion.div
-          className="hero__float hero__float--ballot"
-          animate={{
-            y: [0, -15, 0],
-            rotate: [0, 3, -3, 0],
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <Vote size={32} />
-        </motion.div>
-        <motion.div
-          className="hero__float hero__float--star"
-          animate={{
-            y: [0, -10, 0],
-            rotate: [0, 180, 360],
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          <Star size={20} />
-        </motion.div>
+        </div>
       </section>
 
-      {/* ── Stats Bar ── */}
-      <motion.section
-        className="stats"
-        id="stats-section"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-50px' }}
-      >
-        {stats.map((stat, i) => (
-          <motion.div key={i} className="stats__item" variants={itemVariants}>
-            <span className="stats__value">{stat.value}</span>
-            <span className="stats__label">{stat.label}</span>
-          </motion.div>
-        ))}
-      </motion.section>
+      {/* ── Quick Links / Notification Bar ── */}
+      <div className="notification-bar">
+        <div className="notification-bar__label">Updates:</div>
+        <div className="notification-bar__scroll">
+          <span>• Register for Voter ID online at voters.eci.gov.in</span>
+          <span>• Check your name in the Electoral Roll</span>
+          <span>• Know your Polling Station and Booth Level Officer (BLO)</span>
+        </div>
+      </div>
 
-      {/* ── Features Section ── */}
-      <motion.section
-        className="features"
-        id="features-section"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-80px' }}
-      >
-        <motion.div className="features__header" variants={itemVariants}>
-          <h2 className="section__title">Everything You Need</h2>
-          <p className="section__subtitle">
-            A comprehensive platform designed to make election education accessible,
-            engaging, and empowering for every Indian citizen.
-          </p>
-        </motion.div>
+      {/* ── Resources Section ── */}
+      <section className="resources" id="resources-section">
+        <div className="section-header-gov">
+          <h2 className="section-title-gov">Citizen Resources</h2>
+          <div className="section-divider-gov" />
+        </div>
 
-        <div className="features__grid">
+        <div className="resources__grid">
           {features.map((feature, i) => (
-            <motion.div
-              key={i}
-              className="feature-card"
-              variants={itemVariants}
-              whileHover={{ y: -6, transition: { duration: 0.2 } }}
+            <motion.div 
+              key={i} 
+              className="resource-card"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
             >
-              <div
-                className="feature-card__icon"
-                style={{ '--feature-color': feature.color }}
-              >
+              <div className="resource-card__icon">
                 <feature.icon size={24} />
               </div>
-              <h3 className="feature-card__title">{feature.title}</h3>
-              <p className="feature-card__desc">{feature.desc}</p>
-              <div className="feature-card__glow" style={{ '--feature-color': feature.color }} />
+              <h3 className="resource-card__title">{feature.title}</h3>
+              <p className="resource-card__desc">{feature.desc}</p>
+              <Link to={i === 0 ? "/learn" : i === 1 ? "/quiz" : "/chat"} className="resource-card__link">
+                Read More <ArrowRight size={14} />
+              </Link>
             </motion.div>
           ))}
         </div>
-      </motion.section>
+      </section>
 
-      {/* ── CTA Section ── */}
-      <motion.section
-        className="cta"
-        id="cta-section"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="cta__bg">
-          <div className="cta__orb" />
-        </div>
-        <div className="cta__content">
-          <h2>Ready to Become an Informed Voter?</h2>
-          <p>Start your journey through India's democratic process today.</p>
-          <div className="cta__actions">
-            <Link to="/learn" className="btn btn--primary btn--lg" id="cta-start">
-              Get Started
-              <ChevronRight size={18} />
-            </Link>
-            <Link to="/chat" className="btn btn--ghost" id="cta-chat">
-              <MessageCircle size={18} />
-              Ask AI Assistant
-            </Link>
+      {/* ── Stats Bar (Clean) ── */}
+      <section className="stats-gov">
+        <div className="stats-gov__container">
+          <div className="stat-item-gov">
+            <div className="stat-num">10+</div>
+            <div className="stat-text">Learning Modules</div>
+          </div>
+          <div className="stat-item-gov">
+            <div className="stat-num">15+</div>
+            <div className="stat-text">Quiz Questions</div>
+          </div>
+          <div className="stat-item-gov">
+            <div className="stat-num">24/7</div>
+            <div className="stat-text">AI Support</div>
+          </div>
+          <div className="stat-item-gov">
+            <div className="stat-num">1.4B+</div>
+            <div className="stat-text">Potential Voters</div>
           </div>
         </div>
-      </motion.section>
+      </section>
 
-      {/* ── Footer ── */}
-      <footer className="footer" id="footer">
-        <div className="footer__content">
-          <div className="footer__brand">
-            <Vote size={20} />
-            <span>NirvachakSetu</span>
+      {/* ── Footer (Government Style) ── */}
+      <footer className="footer-gov">
+        <div className="footer-gov__top">
+          <div className="footer-gov__brand">
+            <Vote size={24} />
+            <div>
+              <h3>NirvachakSetu</h3>
+              <p>Election Education & Awareness Portal</p>
+            </div>
           </div>
-          <p className="footer__text">
-            Empowering India's democracy through voter education.
-          </p>
-          <div className="footer__tricolor">
-            <span className="footer__bar footer__bar--saffron" />
-            <span className="footer__bar footer__bar--white" />
-            <span className="footer__bar footer__bar--green" />
+          <div className="footer-gov__links">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Copyright Policy</a>
+            <a href="#">Hyperlinking Policy</a>
+          </div>
+        </div>
+        <div className="footer-gov__bottom">
+          <p>© 2026 NirvachakSetu. All rights reserved. Managed by Citizens for Democracy.</p>
+          <div className="footer-gov__badges">
+            <div className="badge-gIGW">GIGW Certified</div>
+            <div className="badge-W3C">W3C Compliant</div>
           </div>
         </div>
       </footer>

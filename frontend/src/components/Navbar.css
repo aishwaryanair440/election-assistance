@@ -1,21 +1,20 @@
-/* ── Navbar ─────────────────────────────────────────────── */
+/* ── Navbar (Official Government Style) ───────────────────────── */
 .navbar {
   position: fixed;
-  top: 0;
+  top: 4px; /* Account for tricolor strip */
   left: 0;
   right: 0;
   z-index: 1000;
-  padding: var(--space-md) var(--space-xl);
+  background: var(--white);
+  border-bottom: 1px solid var(--border-primary);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-sm) var(--space-xl);
   transition: all var(--transition-base);
-  background: transparent;
 }
 
 .navbar--scrolled {
-  background: rgba(10, 10, 26, 0.85);
-  backdrop-filter: blur(20px) saturate(1.4);
-  -webkit-backdrop-filter: blur(20px) saturate(1.4);
-  border-bottom: 1px solid var(--border-primary);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  padding: var(--space-xs) var(--space-xl);
+  box-shadow: var(--shadow-md);
 }
 
 .navbar__container {
@@ -29,129 +28,121 @@
 .navbar__brand {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   text-decoration: none;
-  color: var(--text-primary);
 }
 
 .navbar__logo {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--radius-md);
-  background: var(--gradient-saffron);
+  width: 50px;
+  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0a0a1a;
-  box-shadow: var(--shadow-glow);
+  color: var(--navy);
+  border-right: 1px solid var(--border-primary);
+  padding-right: var(--space-md);
 }
 
 .navbar__title {
-  font-size: 1.3rem;
-  font-weight: 700;
-  background: var(--gradient-saffron);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar__title span:first-child {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--navy);
   letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.navbar__title::after {
+  content: 'निर्वाचक सेतु — भारत निर्वाचन आयोग';
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: var(--space-sm);
 }
 
 .navbar__link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
   padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
   color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
-  overflow: hidden;
 }
 
 .navbar__link:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-secondary);
+  color: var(--navy);
+  text-decoration: none;
 }
 
 .navbar__link--active {
-  color: var(--saffron) !important;
+  color: var(--white) !important;
+  background: var(--navy) !important;
 }
 
 .navbar__indicator {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 20px;
-  height: 3px;
-  background: var(--gradient-saffron);
-  border-radius: var(--radius-full);
+  display: none; /* Removed for more formal look */
 }
 
 .navbar__toggle {
   display: none;
-  background: none;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  color: var(--text-primary);
-  padding: var(--space-sm);
+  color: var(--navy);
+  padding: 8px;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all var(--transition-fast);
 }
 
-.navbar__toggle:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--saffron);
-}
-
-/* ── Mobile ── */
-@media (max-width: 768px) {
-  .navbar {
-    padding: var(--space-sm) var(--space-md);
+@media (max-width: 900px) {
+  .navbar { padding: var(--space-xs) var(--space-md); }
+  
+  .navbar__logo { 
+    width: auto; 
+    border: none; 
+    padding: 0; 
   }
+  
+  .navbar__title span:first-child { font-size: 1rem; }
 
-  .navbar__toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  .navbar__toggle { display: block; }
 
   .navbar__links {
     position: fixed;
-    top: 64px;
+    top: 60px;
     left: 0;
     right: 0;
-    background: rgba(10, 10, 26, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: var(--white);
     flex-direction: column;
     padding: var(--space-md);
-    gap: var(--space-xs);
-    border-bottom: 1px solid var(--border-primary);
+    border-bottom: 2px solid var(--navy);
+    box-shadow: var(--shadow-lg);
     transform: translateY(-120%);
     opacity: 0;
     transition: all var(--transition-base);
-    pointer-events: none;
   }
 
   .navbar__links--open {
     transform: translateY(0);
     opacity: 1;
-    pointer-events: all;
   }
 
   .navbar__link {
     width: 100%;
+    text-align: center;
     padding: var(--space-md);
-    border-radius: var(--radius-md);
+    border-bottom: 1px solid var(--border-primary);
   }
 }

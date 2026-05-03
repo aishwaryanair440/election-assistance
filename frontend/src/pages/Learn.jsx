@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   BookOpen, ChevronRight, ChevronLeft, CheckCircle, Circle,
   Vote, Layers, UserCheck, Shield, Calendar, Monitor,
-  Scale, TrendingUp, Loader
+  Scale, TrendingUp, Loader, FileText
 } from 'lucide-react'
 import './Learn.css'
 
@@ -35,11 +35,8 @@ export default function Learn() {
         setLoading(false)
       })
       .catch(() => {
-        // Fallback data if API unavailable
         setModules([
-          { _id: '1', order: 1, title: 'What is an Election?', content: 'An election is a formal group decision-making process by which a population chooses an individual to hold public office.', icon: 'vote' },
-          { _id: '2', order: 2, title: 'Types of Elections in India', content: 'India has General Elections, State Assembly Elections, Local Body Elections, and more.', icon: 'layers' },
-          { _id: '3', order: 3, title: 'Who Can Vote?', content: 'Every Indian citizen who is 18 years or older is eligible to vote.', icon: 'user-check' },
+          { _id: '1', order: 1, title: 'Introduction to Indian Elections', content: 'The electoral process is the cornerstone of democracy in India...', icon: 'vote' },
         ])
         setLoading(false)
       })
@@ -53,12 +50,14 @@ export default function Learn() {
     markComplete(activeModule)
     if (activeModule < modules.length - 1) {
       setActiveModule(activeModule + 1)
+      window.scrollTo(0, 0)
     }
   }
 
   const goPrev = () => {
     if (activeModule > 0) {
       setActiveModule(activeModule - 1)
+      window.scrollTo(0, 0)
     }
   }
 
@@ -70,7 +69,7 @@ export default function Learn() {
     return (
       <div className="learn-loading">
         <Loader className="learn-loading__spinner" size={32} />
-        <p>Loading modules...</p>
+        <p>Fetching curriculum data...</p>
       </div>
     )
   }
@@ -79,129 +78,112 @@ export default function Learn() {
   const IconComponent = currentModule ? iconMap[currentModule.icon] || BookOpen : BookOpen
 
   return (
-    <div className="learn" id="learn-page">
-      {/* ── Sidebar ── */}
-      <aside className={`learn__sidebar ${sidebarOpen ? 'learn__sidebar--open' : ''}`}>
-        <div className="sidebar__header">
-          <BookOpen size={20} />
-          <h2>Learning Path</h2>
+    <div className="learn-gov" id="learn-page">
+      {/* ── Official Sidebar ── */}
+      <aside className={`learn-gov__sidebar ${sidebarOpen ? 'learn-gov__sidebar--open' : ''}`}>
+        <div className="sidebar-gov__header">
+          <FileText size={18} />
+          <h2>Curriculum Index</h2>
         </div>
 
-        <div className="sidebar__progress">
-          <div className="sidebar__progress-bar">
+        <div className="sidebar-gov__progress">
+          <div className="sidebar-gov__progress-info">
+            <span>Overall Progress</span>
+            <span>{progress}%</span>
+          </div>
+          <div className="sidebar-gov__progress-bar">
             <motion.div
-              className="sidebar__progress-fill"
+              className="sidebar-gov__progress-fill"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.5 }}
             />
           </div>
-          <span className="sidebar__progress-text">{progress}% Complete</span>
         </div>
 
-        <nav className="sidebar__nav">
+        <nav className="sidebar-gov__nav">
           {modules.map((mod, i) => (
             <button
               key={mod._id}
-              className={`sidebar__item ${i === activeModule ? 'sidebar__item--active' : ''} ${completedModules.has(i) ? 'sidebar__item--completed' : ''}`}
+              className={`sidebar-gov__item ${i === activeModule ? 'sidebar-gov__item--active' : ''} ${completedModules.has(i) ? 'sidebar-gov__item--completed' : ''}`}
               onClick={() => { setActiveModule(i); setSidebarOpen(false); }}
               id={`module-nav-${i}`}
             >
-              <div className="sidebar__item-status">
-                {completedModules.has(i) ? (
-                  <CheckCircle size={18} className="sidebar__check" />
-                ) : (
-                  <Circle size={18} />
-                )}
-              </div>
-              <div className="sidebar__item-content">
-                <span className="sidebar__item-step">Module {mod.order}</span>
-                <span className="sidebar__item-title">{mod.title}</span>
-              </div>
+              <div className="sidebar-gov__item-step">Section {mod.order}</div>
+              <div className="sidebar-gov__item-title">{mod.title}</div>
+              {completedModules.has(i) && <CheckCircle size={14} className="sidebar-gov__item-icon" />}
             </button>
           ))}
         </nav>
       </aside>
 
-      {/* ── Mobile sidebar toggle ── */}
-      <button
-        className="learn__sidebar-toggle"
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        id="sidebar-toggle"
-      >
-        <BookOpen size={18} />
-        <span>Modules</span>
-      </button>
+      {/* ── Main Content Area ── */}
+      <main className="learn-gov__main">
+        <div className="breadcrumb-gov">
+          <Link to="/">Home</Link> / <span>Learning Path</span> / <span>Section {currentModule?.order}</span>
+        </div>
 
-      {/* ── Main Content ── */}
-      <main className="learn__main">
         <AnimatePresence mode="wait">
           {currentModule && (
             <motion.article
               key={currentModule._id}
-              className="module"
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="module-gov"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.3 }}
             >
-              <div className="module__header">
-                <div className="module__icon">
-                  <IconComponent size={28} />
-                </div>
-                <div className="module__meta">
-                  <span className="module__step">Module {currentModule.order} of {modules.length}</span>
-                  <h1 className="module__title">{currentModule.title}</h1>
-                </div>
+              <div className="module-gov__header">
+                <div className="module-gov__badge">Section {currentModule.order} of {modules.length}</div>
+                <h1 className="module-gov__title">{currentModule.title}</h1>
               </div>
 
-              <div className="module__content">
-                {currentModule.content.split('\n\n').map((para, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.1, duration: 0.4 }}
-                  >
-                    {para.startsWith('**') ? (
-                      <h3 className="module__subheading">
-                        {para.replace(/\*\*/g, '')}
-                      </h3>
-                    ) : (
-                      <p className="module__paragraph">{para}</p>
-                    )}
-                  </motion.div>
-                ))}
+              <div className="module-gov__body">
+                {currentModule.content.split('\n\n').map((para, i) => {
+                  if (para.startsWith('**')) {
+                    return <h3 key={i} className="module-gov__subheading">{para.replace(/\*\*/g, '')}</h3>
+                  }
+                  if (para.startsWith('- ')) {
+                    return (
+                      <ul key={i} className="module-gov__list">
+                        {para.split('\n').map((item, j) => (
+                          <li key={j}>{item.replace('- ', '')}</li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                  return <p key={i} className="module-gov__paragraph">{para}</p>
+                })}
               </div>
 
-              <div className="module__actions">
+              <div className="module-gov__footer">
                 <button
-                  className="btn btn--secondary"
+                  className="btn-gov btn-gov--secondary"
                   onClick={goPrev}
                   disabled={activeModule === 0}
                   id="module-prev"
                 >
                   <ChevronLeft size={18} />
-                  Previous
+                  Previous Section
                 </button>
 
                 {activeModule < modules.length - 1 ? (
                   <button
-                    className="btn btn--primary"
+                    className="btn-gov btn-gov--primary"
                     onClick={goNext}
                     id="module-next"
                   >
-                    Mark Complete & Next
+                    Complete & Next Section
                     <ChevronRight size={18} />
                   </button>
                 ) : (
                   <button
-                    className="btn btn--primary"
+                    className="btn-gov btn-gov--primary"
                     onClick={() => markComplete(activeModule)}
                     id="module-finish"
                   >
                     <CheckCircle size={18} />
-                    {completedModules.has(activeModule) ? 'Completed!' : 'Mark as Complete'}
+                    {completedModules.has(activeModule) ? 'Curriculum Completed' : 'Mark as Completed'}
                   </button>
                 )}
               </div>
@@ -210,9 +192,17 @@ export default function Learn() {
         </AnimatePresence>
       </main>
 
-      {/* ── Mobile overlay ── */}
+      {/* Mobile Toggle Button */}
+      <button 
+        className="sidebar-gov-toggle" 
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+      >
+        <FileText size={18} />
+        Index
+      </button>
+
       {sidebarOpen && (
-        <div className="learn__overlay" onClick={() => setSidebarOpen(false)} />
+        <div className="learn-gov__overlay" onClick={() => setSidebarOpen(false)} />
       )}
     </div>
   )

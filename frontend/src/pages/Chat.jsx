@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageCircle, Send, User, Bot, Sparkles, Loader, Trash2, ArrowDown } from 'lucide-react'
+import { Send, User, Bot, Loader, Trash2, ShieldCheck, Info } from 'lucide-react'
 import './Chat.css'
 
 export default function Chat() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Namaste! I'm your Election Assistant. Ask me anything about India's election process, voting rights, or how to register.",
+      text: "Welcome to the NirvachakSetu Helpdesk. I am your automated assistant. How can I help you regarding the electoral process today?",
       sender: 'bot',
       timestamp: new Date()
     }
@@ -55,114 +55,79 @@ export default function Chat() {
       }
       setMessages(prev => [...prev, botMessage])
     } catch (error) {
-      const errorMessage = {
+      const botMessage = {
         id: Date.now() + 1,
-        text: "I'm sorry, I'm having trouble connecting to my brain right now. Please try again in a moment.",
+        text: "I am currently experiencing connectivity issues. Please refer to the official Election Commission website at eci.gov.in for immediate assistance.",
         sender: 'bot',
         timestamp: new Date()
       }
-      setMessages(prev => [...prev, errorMessage])
+      setMessages(prev => [...prev, botMessage])
     } finally {
       setIsTyping(false)
     }
   }
 
-  const clearChat = () => {
-    setMessages([messages[0]])
-  }
-
   return (
-    <div className="chat-page" id="chat-page">
-      <div className="chat-container">
-        {/* --- Chat Header --- */}
-        <header className="chat-header">
-          <div className="chat-header__info">
-            <div className="chat-header__icon">
-              <Sparkles size={20} />
-            </div>
-            <div>
-              <h1>AI Election Assistant</h1>
-              <p>Powered by Gemini AI</p>
-            </div>
+    <div className="chat-gov" id="chat-page">
+      <div className="chat-gov__container">
+        <header className="chat-gov__header">
+          <div className="chat-gov__header-info">
+            <div className="chat-gov__badge">Helpdesk</div>
+            <h2>Automated Citizen Support</h2>
           </div>
-          <button className="chat-header__clear" onClick={clearChat} title="Clear Chat" id="clear-chat">
-            <Trash2 size={18} />
-          </button>
+          <div className="chat-gov__actions">
+            <button className="chat-gov__clear" onClick={() => setMessages([messages[0]])}>
+              <Trash2 size={16} /> Reset Conversation
+            </button>
+          </div>
         </header>
 
-        {/* --- Messages Area --- */}
-        <div className="chat-messages">
+        <div className="chat-gov__disclaimer">
+          <Info size={14} />
+          <span>This is an automated helpdesk. Answers provided are for educational purposes.</span>
+        </div>
+
+        <div className="chat-gov__messages">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
-              <motion.div
-                key={msg.id}
-                className={`message ${msg.sender === 'user' ? 'message--user' : 'message--bot'}`}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="message__avatar">
-                  {msg.sender === 'user' ? <User size={16} /> : <Bot size={16} />}
+              <div key={msg.id} className={`chat-gov__msg ${msg.sender === 'user' ? 'msg--user' : 'msg--bot'}`}>
+                <div className="msg-avatar">
+                  {msg.sender === 'user' ? <User size={14} /> : <Bot size={14} />}
                 </div>
-                <div className="message__bubble">
-                  <div className="message__text">
-                    {msg.text.split('\n').map((line, i) => (
-                      <p key={i}>{line}</p>
-                    ))}
+                <div className="msg-bubble">
+                  <div className="msg-text">
+                    {msg.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
                   </div>
-                  <span className="message__time">
-                    {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                  <div className="msg-time">{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </AnimatePresence>
-          
           {isTyping && (
-            <motion.div 
-              className="message message--bot"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <div className="message__avatar">
-                <Bot size={16} />
-              </div>
-              <div className="message__bubble message__bubble--typing">
-                <div className="typing-indicator">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </motion.div>
+            <div className="chat-gov__msg msg--bot">
+              <div className="msg-avatar"><Bot size={14} /></div>
+              <div className="msg-bubble typing">Processing request...</div>
+            </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* --- Input Area --- */}
-        <form className="chat-input-area" onSubmit={handleSend}>
-          <div className="chat-input-wrapper">
-            <input
-              type="text"
-              className="chat-input"
-              placeholder="Ask about voter ID, EVMs, election dates..."
+        <form className="chat-gov__input-area" onSubmit={handleSend}>
+          <div className="input-wrapper">
+            <input 
+              type="text" 
+              placeholder="Type your query regarding voter registration, polling, etc."
               value={input}
               onChange={(e) => setInput(e.target.value)}
               disabled={isTyping}
-              id="chat-input-field"
             />
-            <button 
-              type="submit" 
-              className="chat-send-btn" 
-              disabled={!input.trim() || isTyping}
-              id="send-message-btn"
-            >
+            <button type="submit" disabled={!input.trim() || isTyping}>
               {isTyping ? <Loader size={18} className="spin" /> : <Send size={18} />}
             </button>
           </div>
-          <p className="chat-disclaimer">
-            This is an AI assistant. For official information, visit <a href="https://eci.gov.in" target="_blank" rel="noreferrer">eci.gov.in</a>
-          </p>
+          <div className="secure-tag">
+            <ShieldCheck size={12} /> SSL Secure Connection
+          </div>
         </form>
       </div>
     </div>

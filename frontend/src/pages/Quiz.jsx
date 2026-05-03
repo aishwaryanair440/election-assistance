@@ -2,16 +2,10 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Brain, ChevronRight, Trophy, RotateCcw, CheckCircle,
-  XCircle, Loader, Zap, Target, Star, ArrowRight
+  XCircle, Loader, Target, ArrowRight, FileText
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import './Quiz.css'
-
-const difficultyColors = {
-  easy: '#22c55e',
-  medium: '#f59e0b',
-  hard: '#ef4444',
-}
 
 export default function Quiz() {
   const [quizzes, setQuizzes] = useState([])
@@ -33,8 +27,6 @@ export default function Quiz() {
       .catch(() => {
         setQuizzes([
           { _id: '1', question: 'What is the minimum age to vote in India?', options: ['16', '18', '21', '25'], correct_answer: '18', difficulty: 'easy' },
-          { _id: '2', question: 'Who conducts elections in India?', options: ['Prime Minister', 'Supreme Court', 'Election Commission of India', 'President'], correct_answer: 'Election Commission of India', difficulty: 'easy' },
-          { _id: '3', question: 'What does EVM stand for?', options: ['Electronic Voting Machine', 'Election Verification Module', 'Electoral Voting Method', 'Electronic Voter Memory'], correct_answer: 'Electronic Voting Machine', difficulty: 'easy' },
         ])
         setLoading(false)
       })
@@ -52,6 +44,7 @@ export default function Quiz() {
     setSelectedOption(null)
     if (currentQ < quizzes.length - 1) {
       setCurrentQ(currentQ + 1)
+      window.scrollTo(0, 0)
     } else {
       submitQuiz()
     }
@@ -68,213 +61,110 @@ export default function Quiz() {
       setResult(data)
       setShowResult(true)
     } catch {
-      // Calculate locally as fallback
-      let correct = 0
-      quizzes.forEach(q => {
-        if (answers[q._id] === q.correct_answer) correct++
-      })
-      setResult({
-        score: correct,
-        total: quizzes.length,
-        percentage: Math.round((correct / quizzes.length) * 100)
-      })
+      setResult({ score: 0, total: quizzes.length, percentage: 0 })
       setShowResult(true)
     }
   }
 
-  const resetQuiz = () => {
-    setCurrentQ(0)
-    setAnswers({})
-    setShowResult(false)
-    setResult(null)
-    setSelectedOption(null)
-    setShowFeedback(false)
-  }
-
-  if (loading) {
-    return (
-      <div className="quiz-loading">
-        <Loader className="quiz-loading__spinner" size={32} />
-        <p>Loading quiz...</p>
-      </div>
-    )
-  }
+  if (loading) return <div className="quiz-loading">Loading Assessment...</div>
 
   const current = quizzes[currentQ]
   const progress = ((currentQ + 1) / quizzes.length) * 100
 
-  const getGrade = (pct) => {
-    if (pct >= 90) return { emoji: '🏆', label: 'Outstanding!', color: '#22c55e' }
-    if (pct >= 70) return { emoji: '🎉', label: 'Great Job!', color: '#3b82f6' }
-    if (pct >= 50) return { emoji: '👍', label: 'Good Effort!', color: '#f59e0b' }
-    return { emoji: '📚', label: 'Keep Learning!', color: '#ef4444' }
-  }
-
   return (
-    <div className="quiz" id="quiz-page">
-      <div className="quiz__container">
+    <div className="quiz-gov" id="quiz-page">
+      <div className="quiz-gov__container">
+        <header className="quiz-gov__header">
+          <div className="quiz-gov__title">
+            <Target size={24} className="icon-navy" />
+            <h1>Voter Awareness Assessment</h1>
+          </div>
+          <div className="quiz-gov__meta">
+            Question {currentQ + 1} of {quizzes.length}
+          </div>
+        </header>
+
+        <div className="quiz-gov__progress">
+          <div className="quiz-gov__progress-bar">
+            <div className="quiz-gov__progress-fill" style={{ width: `${progress}%` }} />
+          </div>
+        </div>
+
         <AnimatePresence mode="wait">
           {!showResult ? (
-            <motion.div
-              key="quiz"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <motion.div 
+              key={currentQ}
+              className="quiz-gov__card"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
             >
-              {/* ── Header ── */}
-              <div className="quiz__header">
-                <div className="quiz__header-left">
-                  <Brain size={22} className="quiz__header-icon" />
-                  <h1>Election Quiz</h1>
-                </div>
-                <div className="quiz__score-badge">
-                  <Target size={16} />
-                  <span>{currentQ + 1} / {quizzes.length}</span>
-                </div>
+              <div className="quiz-gov__difficulty">Difficulty: {current.difficulty}</div>
+              <h2 className="quiz-gov__question">{current.question}</h2>
+
+              <div className="quiz-gov__options">
+                {current.options.map((option, i) => {
+                  const isSelected = selectedOption === option
+                  const isCorrect = option === current.correct_answer
+                  const statusClass = showFeedback ? (isCorrect ? 'correct' : (isSelected ? 'wrong' : '')) : (isSelected ? 'selected' : '')
+
+                  return (
+                    <button 
+                      key={i}
+                      className={`quiz-gov__option ${statusClass}`}
+                      onClick={() => selectAnswer(option)}
+                    >
+                      <span className="option-label">{String.fromCharCode(65 + i)}</span>
+                      <span className="option-text">{option}</span>
+                      {showFeedback && isCorrect && <CheckCircle size={18} className="icon-green" />}
+                      {showFeedback && isSelected && !isCorrect && <XCircle size={18} className="icon-red" />}
+                    </button>
+                  )
+                })}
               </div>
 
-              {/* ── Progress ── */}
-              <div className="quiz__progress">
-                <motion.div
-                  className="quiz__progress-fill"
-                  animate={{ width: `${progress}%` }}
-                  transition={{ duration: 0.4 }}
-                />
-              </div>
-
-              {/* ── Question Card ── */}
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentQ}
-                  className="quiz__card"
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <div className="quiz__card-top">
-                    <span
-                      className="quiz__difficulty"
-                      style={{ '--diff-color': difficultyColors[current.difficulty || 'medium'] }}
-                    >
-                      <Zap size={12} />
-                      {current.difficulty || 'medium'}
-                    </span>
-                    <span className="quiz__qnum">Q{currentQ + 1}</span>
+              {showFeedback && (
+                <div className="quiz-gov__feedback">
+                  <div className={`feedback-msg ${selectedOption === current.correct_answer ? 'msg-green' : 'msg-red'}`}>
+                    {selectedOption === current.correct_answer ? 'Correct Answer' : `Incorrect. The correct answer is: ${current.correct_answer}`}
                   </div>
-
-                  <h2 className="quiz__question">{current.question}</h2>
-
-                  <div className="quiz__options">
-                    {current.options.map((option, i) => {
-                      const isSelected = selectedOption === option
-                      const isCorrect = option === current.correct_answer
-                      const showCorrect = showFeedback && isCorrect
-                      const showWrong = showFeedback && isSelected && !isCorrect
-
-                      return (
-                        <motion.button
-                          key={i}
-                          className={`quiz__option ${isSelected ? 'quiz__option--selected' : ''} ${showCorrect ? 'quiz__option--correct' : ''} ${showWrong ? 'quiz__option--wrong' : ''}`}
-                          onClick={() => selectAnswer(option)}
-                          whileHover={!showFeedback ? { scale: 1.01 } : {}}
-                          whileTap={!showFeedback ? { scale: 0.99 } : {}}
-                          id={`quiz-option-${i}`}
-                        >
-                          <span className="quiz__option-letter">
-                            {String.fromCharCode(65 + i)}
-                          </span>
-                          <span className="quiz__option-text">{option}</span>
-                          {showCorrect && <CheckCircle size={18} className="quiz__option-icon quiz__option-icon--correct" />}
-                          {showWrong && <XCircle size={18} className="quiz__option-icon quiz__option-icon--wrong" />}
-                        </motion.button>
-                      )
-                    })}
-                  </div>
-
-                  {showFeedback && (
-                    <motion.div
-                      className="quiz__feedback"
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                    >
-                      {selectedOption === current.correct_answer ? (
-                        <div className="quiz__feedback--correct">
-                          <CheckCircle size={18} />
-                          <span>Correct! Well done!</span>
-                        </div>
-                      ) : (
-                        <div className="quiz__feedback--wrong">
-                          <XCircle size={18} />
-                          <span>Incorrect. The answer is: {current.correct_answer}</span>
-                        </div>
-                      )}
-                      <button className="btn btn--primary" onClick={nextQuestion} id="quiz-next">
-                        {currentQ < quizzes.length - 1 ? (
-                          <>Next Question <ChevronRight size={16} /></>
-                        ) : (
-                          <>See Results <Trophy size={16} /></>
-                        )}
-                      </button>
-                    </motion.div>
-                  )}
-                </motion.div>
-              </AnimatePresence>
+                  <button className="btn-gov btn-gov--primary" onClick={nextQuestion}>
+                    {currentQ < quizzes.length - 1 ? 'Next Question' : 'View Results'}
+                  </button>
+                </div>
+              )}
             </motion.div>
           ) : (
-            /* ── Results ── */
-            <motion.div
-              key="results"
-              className="quiz__results"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-              id="quiz-results"
-            >
-              {result && (() => {
-                const grade = getGrade(result.percentage)
-                return (
-                  <>
-                    <div className="results__trophy">
-                      <span className="results__emoji">{grade.emoji}</span>
-                    </div>
-                    <h2 className="results__title" style={{ color: grade.color }}>
-                      {grade.label}
-                    </h2>
-                    <div className="results__score-circle">
-                      <svg viewBox="0 0 120 120">
-                        <circle cx="60" cy="60" r="52" className="results__circle-bg" />
-                        <motion.circle
-                          cx="60" cy="60" r="52"
-                          className="results__circle-fill"
-                          style={{ stroke: grade.color }}
-                          strokeDasharray={`${2 * Math.PI * 52}`}
-                          strokeDashoffset={`${2 * Math.PI * 52 * (1 - result.percentage / 100)}`}
-                          initial={{ strokeDashoffset: 2 * Math.PI * 52 }}
-                          animate={{ strokeDashoffset: 2 * Math.PI * 52 * (1 - result.percentage / 100) }}
-                          transition={{ duration: 1.5, ease: 'easeOut' }}
-                        />
-                      </svg>
-                      <div className="results__score-text">
-                        <span className="results__pct">{result.percentage}%</span>
-                        <span className="results__fraction">{result.score}/{result.total}</span>
-                      </div>
-                    </div>
+            <div className="quiz-gov__results">
+              <div className="results-header">
+                <Trophy size={48} className="icon-saffron" />
+                <h2>Assessment Complete</h2>
+              </div>
+              
+              <div className="results-score">
+                <div className="score-box">
+                  <span className="score-num">{result?.score}</span>
+                  <span className="score-label">Correct</span>
+                </div>
+                <div className="score-box">
+                  <span className="score-num">{result?.total}</span>
+                  <span className="score-label">Total Questions</span>
+                </div>
+              </div>
 
-                    <div className="results__actions">
-                      <button className="btn btn--primary" onClick={resetQuiz} id="quiz-retry">
-                        <RotateCcw size={18} />
-                        Try Again
-                      </button>
-                      <Link to="/learn" className="btn btn--secondary" id="quiz-back-learn">
-                        <ArrowRight size={18} />
-                        Back to Learning
-                      </Link>
-                    </div>
-                  </>
-                )
-              })()}
-            </motion.div>
+              <div className="results-pct">
+                Your Score: <strong>{result?.percentage}%</strong>
+              </div>
+
+              <div className="results-actions">
+                <button className="btn-gov btn-gov--primary" onClick={() => window.location.reload()}>
+                  <RotateCcw size={18} /> Restart Assessment
+                </button>
+                <Link to="/learn" className="btn-gov btn-gov--secondary">
+                  Continue Learning Path
+                </Link>
+              </div>
+            </div>
           )}
         </AnimatePresence>
       </div>

@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   NirvachakSetu — Design System
-   Indian Election Education Platform
+   NirvachakSetu — Official Government UI System
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── CSS Reset & Base ─────────────────────────────────────────── */
@@ -11,55 +10,41 @@
 }
 
 :root {
-  /* ── Color Palette (Indian Flag Inspired + Modern Dark) ── */
+  /* ── Official Government Color Palette ── */
   --saffron: #FF9933;
-  --saffron-light: #FFB366;
   --saffron-dark: #E6801A;
-  --saffron-glow: rgba(255, 153, 51, 0.15);
-  --saffron-glow-strong: rgba(255, 153, 51, 0.3);
-  
   --green: #138808;
-  --green-light: #1AA00A;
   --green-dark: #0E6606;
-  --green-glow: rgba(19, 136, 8, 0.15);
-  
-  --white-flag: #FFFFFF;
   --navy: #000080;
-  --navy-light: #1a1a9a;
+  --navy-light: #003399;
+  --white: #FFFFFF;
+  --light-gray: #F5F7FA;
+  --medium-gray: #E2E8F0;
+  --dark-gray: #4A5568;
   
-  /* ── Dark Theme Colors ── */
-  --bg-primary: #0a0a1a;
-  --bg-secondary: #0f0f2e;
-  --bg-tertiary: #151540;
-  --bg-card: rgba(20, 20, 60, 0.6);
-  --bg-card-hover: rgba(30, 30, 80, 0.8);
-  --bg-glass: rgba(15, 15, 46, 0.7);
-  --bg-input: rgba(20, 20, 60, 0.8);
+  /* ── UI Colors ── */
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F8FAFC;
+  --bg-tertiary: #F1F5F9;
+  --bg-accent: #000080;
   
-  --border-primary: rgba(255, 153, 51, 0.15);
-  --border-secondary: rgba(255, 255, 255, 0.06);
-  --border-active: rgba(255, 153, 51, 0.4);
+  --border-primary: #E2E8F0;
+  --border-secondary: #CBD5E0;
+  --border-active: #FF9933;
   
-  --text-primary: #f0f0f5;
-  --text-secondary: #9a9ab0;
-  --text-muted: #6a6a85;
-  --text-accent: var(--saffron);
-  
-  /* ── Gradients ── */
-  --gradient-hero: linear-gradient(135deg, #0a0a1a 0%, #1a0a30 30%, #0a1a30 70%, #0a0a1a 100%);
-  --gradient-saffron: linear-gradient(135deg, var(--saffron), var(--saffron-light));
-  --gradient-card: linear-gradient(145deg, rgba(20, 20, 60, 0.8), rgba(10, 10, 40, 0.6));
-  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(255, 153, 51, 0.08) 0%, transparent 60%);
-  
-  /* ── Shadows ── */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 30px rgba(255, 153, 51, 0.15);
-  --shadow-glow-strong: 0 0 60px rgba(255, 153, 51, 0.25);
+  --text-primary: #1A202C;
+  --text-secondary: #4A5568;
+  --text-muted: #718096;
+  --text-accent: #000080;
+  --text-on-accent: #FFFFFF;
   
   /* ── Typography ── */
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* ── Shadows (Official & Subtle) ── */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   
   /* ── Spacing ── */
   --space-xs: 4px;
@@ -69,31 +54,20 @@
   --space-xl: 32px;
   --space-2xl: 48px;
   --space-3xl: 64px;
-  --space-4xl: 96px;
   
   /* ── Border Radius ── */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 9999px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
   
   /* ── Transitions ── */
   --transition-fast: 150ms ease;
   --transition-base: 250ms ease;
-  --transition-slow: 400ms ease;
   
   font-family: var(--font-family);
   color: var(--text-primary);
   background: var(--bg-primary);
   line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html, body {
-  min-height: 100vh;
-  overflow-x: hidden;
 }
 
 body {
@@ -108,49 +82,59 @@ body {
 
 /* ── Scrollbar Styling ── */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--bg-secondary);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 153, 51, 0.3);
-  border-radius: var(--radius-full);
+  background: var(--border-secondary);
+  border-radius: var(--radius-sm);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 153, 51, 0.5);
-}
-
-/* ── Selection ── */
-::selection {
-  background: rgba(255, 153, 51, 0.3);
-  color: var(--text-primary);
-}
-
-/* ── Focus Styles ── */
-:focus-visible {
-  outline: 2px solid var(--saffron);
-  outline-offset: 2px;
+  background: var(--dark-gray);
 }
 
 a {
-  color: var(--saffron);
+  color: var(--navy);
   text-decoration: none;
+  font-weight: 500;
   transition: color var(--transition-fast);
 }
 a:hover {
-  color: var(--saffron-light);
+  color: var(--saffron-dark);
+  text-decoration: underline;
 }
 
-/* ── Background Noise/Grain Effect ── */
-body::before {
-  content: '';
+/* ── Official Tricolor Strip ── */
+.tricolor-strip {
+  height: 4px;
+  width: 100%;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 0;
+  z-index: 2000;
+}
+.tricolor-strip div { flex: 1; }
+.strip-saffron { background: var(--saffron); }
+.strip-white { background: #FFFFFF; }
+.strip-green { background: var(--green); }
+
+/* ── Accessibility Bar (Typical Gov) ── */
+.accessibility-bar {
+  background: var(--navy);
+  color: white;
+  padding: 4px var(--space-xl);
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  z-index: 1100;
+}
+.accessibility-bar span { cursor: pointer; opacity: 0.8; }
+.accessibility-bar span:hover { opacity: 1; }
+
+@media (max-width: 768px) {
+  .accessibility-bar { display: none; }
 }
