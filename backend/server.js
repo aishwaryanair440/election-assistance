@@ -12,7 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the frontend/dist directory
-app.use(express.static(path.join(__dirname, '../frontend/dist')));
+const frontendDist = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendDist));
+app.use(express.static(path.join(process.cwd(), 'frontend/dist'))); // Alternative for root execution
 
 // ──────────────────────────────────────
 // DATA STORE & SEED DATA
@@ -212,7 +214,19 @@ app.get('/api/health', (req, res) => {
 
 // Catch-all route to serve frontend's index.html for client-side routing
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+  const indexPath = path.join(__dirname, '../frontend/dist', 'index.html');
+  const fallbackPath = path.join(process.cwd(), 'frontend/dist', 'index.html');
+  
+  // Try sending the relative path first, then fallback to current working directory
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      res.sendFile(fallbackPath, (err2) => {
+        if (err2) {
+          res.status(404).send('Frontend not found. Please ensure the frontend is built.');
+        }
+      });
+    }
+  });
 });
 
 app.listen(PORT, () => {
