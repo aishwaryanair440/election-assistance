@@ -1,0 +1,156 @@
+/* ═══════════════════════════════════════════════════════════════
+   NirvachakSetu — Design System
+   Indian Election Education Platform
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── CSS Reset & Base ─────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* ── Color Palette (Indian Flag Inspired + Modern Dark) ── */
+  --saffron: #FF9933;
+  --saffron-light: #FFB366;
+  --saffron-dark: #E6801A;
+  --saffron-glow: rgba(255, 153, 51, 0.15);
+  --saffron-glow-strong: rgba(255, 153, 51, 0.3);
+  
+  --green: #138808;
+  --green-light: #1AA00A;
+  --green-dark: #0E6606;
+  --green-glow: rgba(19, 136, 8, 0.15);
+  
+  --white-flag: #FFFFFF;
+  --navy: #000080;
+  --navy-light: #1a1a9a;
+  
+  /* ── Dark Theme Colors ── */
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #0f0f2e;
+  --bg-tertiary: #151540;
+  --bg-card: rgba(20, 20, 60, 0.6);
+  --bg-card-hover: rgba(30, 30, 80, 0.8);
+  --bg-glass: rgba(15, 15, 46, 0.7);
+  --bg-input: rgba(20, 20, 60, 0.8);
+  
+  --border-primary: rgba(255, 153, 51, 0.15);
+  --border-secondary: rgba(255, 255, 255, 0.06);
+  --border-active: rgba(255, 153, 51, 0.4);
+  
+  --text-primary: #f0f0f5;
+  --text-secondary: #9a9ab0;
+  --text-muted: #6a6a85;
+  --text-accent: var(--saffron);
+  
+  /* ── Gradients ── */
+  --gradient-hero: linear-gradient(135deg, #0a0a1a 0%, #1a0a30 30%, #0a1a30 70%, #0a0a1a 100%);
+  --gradient-saffron: linear-gradient(135deg, var(--saffron), var(--saffron-light));
+  --gradient-card: linear-gradient(145deg, rgba(20, 20, 60, 0.8), rgba(10, 10, 40, 0.6));
+  --gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(255, 153, 51, 0.08) 0%, transparent 60%);
+  
+  /* ── Shadows ── */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 30px rgba(255, 153, 51, 0.15);
+  --shadow-glow-strong: 0 0 60px rgba(255, 153, 51, 0.25);
+  
+  /* ── Typography ── */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  /* ── Spacing ── */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  
+  /* ── Border Radius ── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  
+  /* ── Transitions ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 400ms ease;
+  
+  font-family: var(--font-family);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-primary);
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 153, 51, 0.3);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 153, 51, 0.5);
+}
+
+/* ── Selection ── */
+::selection {
+  background: rgba(255, 153, 51, 0.3);
+  color: var(--text-primary);
+}
+
+/* ── Focus Styles ── */
+:focus-visible {
+  outline: 2px solid var(--saffron);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--saffron);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+a:hover {
+  color: var(--saffron-light);
+}
+
+/* ── Background Noise/Grain Effect ── */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
