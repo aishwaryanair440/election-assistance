@@ -1,7 +1,7 @@
 /* ── Navbar (Official Government Style) ───────────────────────── */
 .navbar {
   position: fixed;
-  top: 4px; /* Account for tricolor strip */
+  top: 30px; /* Below accessibility bar */
   left: 0;
   right: 0;
   z-index: 1000;
@@ -10,6 +10,10 @@
   box-shadow: var(--shadow-sm);
   padding: var(--space-sm) var(--space-xl);
   transition: all var(--transition-base);
+}
+
+@media (max-width: 768px) {
+  .navbar { top: 4px; } /* Directly below tricolor strip on mobile */
 }
 
 .navbar--scrolled {
@@ -33,8 +37,8 @@
 }
 
 .navbar__logo {
-  width: 50px;
-  height: 50px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -43,38 +47,24 @@
   padding-right: var(--space-md);
 }
 
-.navbar__title {
-  display: flex;
-  flex-direction: column;
-}
-
-.navbar__title span:first-child {
-  font-size: 1.2rem;
+.navbar__title span {
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--navy);
   letter-spacing: -0.5px;
-  line-height: 1.1;
-}
-
-.navbar__title::after {
-  content: 'निर्वाचक सेतु — भारत निर्वाचन आयोग';
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-top: 2px;
 }
 
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
 .navbar__link {
   padding: var(--space-sm) var(--space-md);
   color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   border-radius: var(--radius-sm);
@@ -84,16 +74,11 @@
 .navbar__link:hover {
   background: var(--bg-secondary);
   color: var(--navy);
-  text-decoration: none;
 }
 
 .navbar__link--active {
   color: var(--white) !important;
   background: var(--navy) !important;
-}
-
-.navbar__indicator {
-  display: none; /* Removed for more formal look */
 }
 
 .navbar__toggle {
@@ -106,17 +91,13 @@
   cursor: pointer;
 }
 
+@media (max-width: 1024px) {
+  .navbar__link { padding: var(--space-sm) var(--space-sm); font-size: 0.75rem; }
+}
+
 @media (max-width: 900px) {
   .navbar { padding: var(--space-xs) var(--space-md); }
-  
-  .navbar__logo { 
-    width: auto; 
-    border: none; 
-    padding: 0; 
-  }
-  
-  .navbar__title span:first-child { font-size: 1rem; }
-
+  .navbar__logo { border: none; padding: 0; }
   .navbar__toggle { display: block; }
 
   .navbar__links {
@@ -132,11 +113,13 @@
     transform: translateY(-120%);
     opacity: 0;
     transition: all var(--transition-base);
+    pointer-events: none;
   }
 
   .navbar__links--open {
     transform: translateY(0);
     opacity: 1;
+    pointer-events: auto;
   }
 
   .navbar__link {
@@ -144,5 +127,6 @@
     text-align: center;
     padding: var(--space-md);
     border-bottom: 1px solid var(--border-primary);
+    font-size: 0.9rem;
   }
 }
