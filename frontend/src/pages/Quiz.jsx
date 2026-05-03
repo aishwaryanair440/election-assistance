@@ -27,9 +27,19 @@ export default function Quiz() {
       .catch(() => {
         setQuizzes([
           { _id: '1', question: 'What is the minimum age to vote in India?', options: ['16', '18', '21', '25'], correct_answer: '18', difficulty: 'easy' },
+          { _id: '2', question: 'Who conducts elections in India?', options: ['Prime Minister', 'Supreme Court', 'Election Commission of India', 'President'], correct_answer: 'Election Commission of India', difficulty: 'easy' },
+          { _id: '3', question: 'What does EVM stand for?', options: ['Electronic Voting Machine', 'Election Verification Module', 'Electoral Voting Method', 'Electronic Voter Memory'], correct_answer: 'Electronic Voting Machine', difficulty: 'easy' },
+          { _id: '4', question: 'When is National Voters Day celebrated?', options: ['26th January', '15th August', '25th January', '2nd October'], correct_answer: '25th January', difficulty: 'easy' },
+          { _id: '5', question: 'What is the NOTA option on an EVM?', options: ['New Option for Total Audit', 'None of The Above', 'National Online Testing Authority', 'No Objection To Application'], correct_answer: 'None of The Above', difficulty: 'medium' },
+          { _id: '6', question: 'How many members are elected to the Lok Sabha?', options: ['245', '543', '250', '500'], correct_answer: '543', difficulty: 'medium' },
+          { _id: '7', question: 'What document is essential for voter identification?', options: ['Passport only', 'Aadhaar only', 'EPIC (Voter ID Card)', 'PAN Card only'], correct_answer: 'EPIC (Voter ID Card)', difficulty: 'easy' },
+          { _id: '8', question: 'Under which Article of the Constitution is the Election Commission established?', options: ['Article 312', 'Article 324', 'Article 356', 'Article 370'], correct_answer: 'Article 324', difficulty: 'hard' },
+          { _id: '9', question: 'What is the campaign silence period before polling?', options: ['24 hours', '48 hours', '72 hours', '12 hours'], correct_answer: '48 hours', difficulty: 'medium' },
+          { _id: '10', question: 'What does VVPAT stand for?', options: ['Voter Verified Polling Audit Trail', 'Voter Verifiable Paper Audit Trail', 'Vote Verification and Paper Tracking', 'Virtual Voting and Paper Trail'], correct_answer: 'Voter Verifiable Paper Audit Trail', difficulty: 'medium' }
         ])
         setLoading(false)
       })
+
   }, [])
 
   const selectAnswer = (option) => {
